@@ -5,6 +5,9 @@ from datetime import date, timedelta
 import plotly.graph_objects as go
 
 stock_symbols=None
+tab1,tab2 = st.tabs(["Ingestión", "Estadísticos"])
+
+
 
 def calculate_technical_indicators(df):
     """
@@ -40,7 +43,7 @@ def get_stock_data(ticker_symbol, start_date, end_date,attributes, include_indic
         # Calculate technical indicators
         price_history = calculate_technical_indicators(price_history)
 
-    placeholder = st.empty()
+    placeholder = tab1
     with placeholder.container():
         st.subheader(f"Summary {ticker_symbol}")
         for attribute in attributes:
@@ -64,7 +67,7 @@ def get_stock_data(ticker_symbol, start_date, end_date,attributes, include_indic
         st.plotly_chart(fig)
 
         if st.button("Agregar a la Simulación"):
-            print(st.session_state['stocks'].keys())
+            #print(st.session_state['stocks'].keys())
             if  not ticker_symbol in st.session_state['stocks'] :
                 st.session_state['stocks'][ticker_symbol]=price_history
                 st.sidebar.write("Agregado a la simulación")
@@ -196,11 +199,14 @@ def get_stock_data(ticker_symbol, start_date, end_date,attributes, include_indic
     # st.subheader("Actualizaciones y Rebajas")
     # upgrades_downgrades = ticker.upgrades_downgrades
     # st.write(upgrades_downgrades)
+    
 def simulate():
     print(st.session_state['stocks'].keys())
     for the_tickersymbol in st.session_state['stocks'].keys():
        the_history=st.session_state['stocks'].get(the_tickersymbol)
-       print(the_history.describe())
+       with tab2:
+           st.subheader(the_tickersymbol)
+           st.write(the_history.describe())
     st.session_state['stocks']={}
 
 def main():
@@ -233,7 +239,7 @@ def main():
         for key in st.session_state['stocks'].keys():
              st.write(f"{key}")
 
-        if st.button("Simular"):
+        if st.button("Obtener estadisticos"):
             st.write("Simulando")
             simulate()
 
